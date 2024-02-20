@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompaniesRequest;
 use App\Models\Companies;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CompaniesController extends Controller
 {
+    protected $companyModel;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->companyModel = new Companies();
     }
 
     /**
@@ -18,7 +22,8 @@ class CompaniesController extends Controller
      */
     public function index()
     {
-        return view('company.index');
+        $companies = $this->companyModel->paginate(5);
+        return view('company.index', compact('companies'));
     }
 
     /**
@@ -26,7 +31,7 @@ class CompaniesController extends Controller
      */
     public function create()
     {
-        //
+        return view('company.form');
     }
 
     /**
@@ -34,38 +39,66 @@ class CompaniesController extends Controller
      */
     public function store(CompaniesRequest $request)
     {
-        //
-    }
+        try {
+            DB::beginTransaction();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Companies $companies)
-    {
-        //
+            $companyId = $request->companyId;
+            $data = [
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'website'   => $request->website,
+            ];
+
+            if ($companyId) {
+                if ($request->hasFile('logo')) {
+                    $logo = $request->logo->store('company/', 'public');
+                    $data['logo'] = $logo;
+                }
+
+                $this->companyModel->updateData($companyId, $data);
+            } else {
+                $logo = $request->logo->store('company/', 'public');
+                $data['logo'] = $logo;
+
+                $this->companyModel->create($data);
+            }
+
+            DB::commit();
+
+            return redirect()->route('company.index')->with('success', 'Company successfully saved');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error in Companies store method: ' . $th->getMessage());
+            return redirect()->route('company.index')->with('error', 'Company failed to save');
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Companies $companies)
+    public function edit($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Companies $companies)
-    {
-        //
+        $company = $this->companyModel->getCompanyById($id);
+        return view('company.form', compact('company'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Companies $companies)
+    public function destroy($id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $this->companyModel->deleteCompanyById($id);
+
+            DB::commit();
+
+            return redirect()->route('company.index')->with('success', 'Company successfully deleted');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error in Companies destroy method: ' . $th->getMessage());
+            return redirect()->route('company.index')->with('error', 'Company failed to delete');
+        }
     }
 }

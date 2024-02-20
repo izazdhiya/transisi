@@ -20,6 +20,28 @@ class Companies extends Model
     
     public function employee()
     {
-        return $this->hasMany(Employees::class);
+        return $this->hasMany(Employees::class, 'company_id');
+    }
+
+    public function updateData($companyId, $data)
+    {
+        $company = $this->find($companyId);
+        $company->update($data);
+        return $company;
+    }
+
+    public function getCompanyById($id)
+    {
+        $company = $this->find($id);
+        return $company;
+    }
+
+    public function deleteCompanyById($id)
+    {
+        $company = $this->find($id);
+        $company->employee()->delete();
+        $company->delete();
+
+        return $company;
     }
 }

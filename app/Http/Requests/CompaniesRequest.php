@@ -21,12 +21,19 @@ class CompaniesRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+
+        $rules = [
             'name'    => 'required',
             'email'   => 'required|email',
-            'logo'    => 'required|image|mimes:png|dimensions:min_width=100,min_height=100|max:2048',
             'website' => 'required|url',
         ];
+    
+        if (empty($this->input('companyId'))) {
+            $rules['logo'] = 'required|image|mimes:png|dimensions:min_width=100,min_height=100|max:2048';
+        }
+    
+        return $rules;
+    
     }
 
     public function messages()

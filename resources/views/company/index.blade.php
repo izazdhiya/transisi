@@ -9,15 +9,24 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ __('Company') }}</span>
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-company-form">
+                    <a class="btn btn-primary" href="{{ route('company.create') }}">
                         Create
-                    </button>
+                    </a>
+                    
                 </div>                
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     @endif
 
@@ -34,18 +43,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Transisi</td>
-                                    <td>admin@transisi.id</td>
-                                    <td>test</td>
+                                @foreach ($companies as $index => $company)
+
+                                @php
+                                    $number = ($companies->currentPage() - 1) * $companies->perPage() + $index + 1;
+                                @endphp
+
+                                <tr style="vertical-align: middle;">
+                                    <td>{{ $number }}</td>
+                                    <td>{{ $company->name }}</td>
+                                    <td>{{ $company->email }}</td>
                                     <td>
-                                        <a href="https://transisi.id" target="_blank">https://transisi.id</a>
+                                        <img height="70px" src="{{ asset('storage/' . $company->logo) }}" style="border-radius: 5px;">
+                                    </td>
+                                    <td>
+                                        <a href="{{ $company->website }}" target="_blank">{{ $company->website }}</a>
                                     </td>
                                     <td>
                                         <div class="d-flex flex-row-reverse">
-                                            <a href="" class="btn btn-warning btn-sm mx-1" title="Edit"><i class="fas fa-pen"></i></a>
-                                            <form action="" method="POST">
+                                            <a class="btn btn-warning btn-sm mx-1" title="Edit" href='{{ route('company.edit', $company->id) }}'><i class="fas fa-pen"></i></a>
+                                            <form action="{{ route('company.destroy', $company->id) }}" method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-outline-danger btn-sm mx-1" title="Delete"><i class="fas fa-trash"></i></button>
@@ -53,15 +70,31 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        @if ($companies->lastPage() > 1)
+                            <ul class="pagination">
+                                <li class="page-item {{ ($companies->currentPage() == 1) ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $companies->url(1) }}">Previous</a>
+                                </li>
+                                @for ($i = 1; $i <= $companies->lastPage(); $i++)
+                                    <li class="page-item {{ ($companies->currentPage() == $i) ? 'active' : '' }}">
+                                        <a href="{{ $companies->url($i) }}" class="page-link">{{ $i }}</a>
+                                    </li>
+                                @endfor
+                                <li class="page-item {{ ($companies->currentPage() == $companies->lastPage()) ? 'disabled' : '' }}">
+                                    <a class="page-link" href="{{ $companies->url($companies->currentPage() + 1) }}">Next</a>
+                                </li>
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-@include('company.form')
 
 @endsection
