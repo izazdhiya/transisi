@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'New Company')
+@section('title', 'Company')
 
 @section('content')
 <div class="container">
@@ -25,7 +25,7 @@
                                     <img width="20%" style="border-radius: 5px;" src="{{ asset('storage/' . $company->logo) }}" alt="Preview Image">
                                 </div>
                             @endif
-                            
+
                             <div class="col-md-12 mb-3">
                                 <label for="name">Company Name</label>
                                 <input class="form-control @error('name') is-invalid @enderror" id="name" name="name" type="text" placeholder="Company Name" value="{{ old('name', !empty($company) ? $company->name : "") }}">

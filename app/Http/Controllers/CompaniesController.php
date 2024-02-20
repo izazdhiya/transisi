@@ -101,4 +101,10 @@ class CompaniesController extends Controller
             return redirect()->route('company.index')->with('error', 'Company failed to delete');
         }
     }
+
+    public function getCompanyOptions()
+    {
+        $companies = $this->companyModel->getCompany();
+        return response()->json($companies);
+    }
 }

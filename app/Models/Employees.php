@@ -21,4 +21,25 @@ class Employees extends Model
     {
         return $this->belongsTo(Companies::class);
     }
+
+    public function updateData($employeeId, $data)
+    {
+        $employee = $this->find($employeeId);
+        $employee->update($data);
+        return $employee;
+    }
+
+    public function getEmployeeById($id)
+    {
+        $employee = $this->find($id);
+        return $employee;
+    }
+
+    public function deleteEmployeeById($id)
+    {
+        $employee = $this->find($id);
+        $employee->delete();
+
+        return $employee;
+    }
 }
