@@ -2,6 +2,13 @@
 
 This Laravel project serves as CRUD Data Employee and Company. It incorporates the Laravel UI Bootstrap package for authentication, Laravel Snappy for PDF generation, and Maatwebsite/Excel for handling Excel imports and exports.
 
+## Features
+
+- Authentication
+- CRUD DATA
+- Export PDF
+- Import Excell
+
 ## Installation
 
 Follow these steps to set up and run the project locally:
@@ -26,7 +33,7 @@ Follow these steps to set up and run the project locally:
    - Create a new database for the project.
    - Update the .env file with your database credentials.
 
-6. **Run Migration and Seed:**
+6. **Run Migration and Seeder:**
    ```bash
    php artisan migrate && php artisan db:seed
 
@@ -37,6 +44,9 @@ Follow these steps to set up and run the project locally:
 8. **Serve The Application:**
    ```bash
    php artisan serve
+
+Visit http://localhost:8000 in your browser to access the application.
+
 
 
 
