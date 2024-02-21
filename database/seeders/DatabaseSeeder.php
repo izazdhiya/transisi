@@ -17,5 +17,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@transisi.id',
             'password' => bcrypt('transisi'),
         ]);
+
+        $this->call([
+            CompaniesSeeder::class,
+        ]);
     }
 }
