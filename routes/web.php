@@ -24,5 +24,5 @@ Auth::routes();
 
 Route::resource('employee', EmployeesController::class);
 Route::resource('company', CompaniesController::class);
-Route::get('/get-company', [CompaniesController::class, 'getCompnyOptions']);
+Route::get('/get-company', [CompaniesController::class, 'getCompanyOptions']);
 

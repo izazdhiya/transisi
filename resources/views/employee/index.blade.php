@@ -16,11 +16,8 @@
                 </div>  
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                    
+                    @include('message')
 
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">

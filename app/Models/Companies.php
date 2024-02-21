@@ -44,4 +44,32 @@ class Companies extends Model
 
         return $company;
     }
+
+    // public function getCompany($query)
+    // {
+    //     $companies = $this->where('name', 'like', '%' . $query . '%')->get();
+
+    //     $data = $companies->map(function ($company) {
+    //         return ['id' => $company->id, 'text' => $company->name];
+    //     })->toArray();
+
+    //     return $data;
+    // }
+
+    public function getCompany($query, $page, $perPage)
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $queryBuilder = $this->where('name', 'like', '%' . $query . '%');
+
+        $total = $queryBuilder->count();
+
+        $companies = $queryBuilder->skip($offset)->take($perPage)->get();
+
+        $data = $companies->map(function ($company) {
+            return ['id' => $company->id, 'text' => $company->name];
+        })->toArray();
+
+        return ['data' => $data, 'total' => $total];
+    }
 }

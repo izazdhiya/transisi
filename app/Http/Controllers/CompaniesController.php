@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CompaniesRequest;
 use App\Models\Companies;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -102,9 +103,23 @@ class CompaniesController extends Controller
         }
     }
 
-    public function getCompanyOptions()
+    public function getCompanyOptions(Request $request)
     {
-        $companies = $this->companyModel->getCompany();
-        return response()->json($companies);
+        try {
+            $query = $request->input('q');
+            $page = $request->input('page') ?? 1;
+            $perPage = 5;
+
+            $pagination = true;
+
+            $companies = $this->companyModel->getCompany($query, $page, $perPage);
+            return response()->json(['items' => $companies['data'], 'total_count' => $companies['total'], 'pagination' => $pagination]);
+        } catch (\Throwable $th) {
+            Log::error('Error in getCompanyOptions method: ' . $th->getMessage());
+
+            $pagination = false;
+
+            return response()->json(['items' => [], 'total_count' => 0, 'pagination' => $pagination]);
+        }
     }
 }
