@@ -4,21 +4,42 @@
 
 @section('content')
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ __('Employee') }}</span>
-                    <a class="btn btn-primary" href="{{ route('employee.create') }}">
-                        Create
-                    </a>
+                    <div>
+                        <a class="btn btn-outline-primary" href="{{ route('employee.create') }}">
+                            Import
+                        </a>
+                        <a class="btn btn-primary" href="{{ route('employee.create') }}">
+                            Create
+                        </a>
+                    </div>
                 </div>  
 
                 <div class="card-body">
                     
                     @include('message')
 
+                    <div class="d-flex justify-content-between align-items-center">
+                        <form class="row g-2 mb-3" action="{{ route('export-employee') }}" method="GET">
+                            <div class="col-auto">
+                                <label for="company_id" class="visually-hidden">Password</label>
+                                <select class="form-select" id="company_id" name="company_id">
+                                    <option value="" selected>Choose company...</option>
+                                </select>
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-outline-primary" style="height: 30px; padding: 3px;">Export PDF</button>
+                            </div>
+                        </form>
+                    </div> 
+                
                     <div class="table-responsive">
                         <table class="table table-striped table-hover">
                             <thead>
@@ -79,5 +100,55 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var baseUrl = "{{ url('/') }}";
+
+        $('#company_id').select2({
+            ajax: {
+                url: baseUrl + '/get-company',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function(data, params) {
+                    console.log("page " + params.page);
+                    console.log("totalData " + data.total_count);
+                    if (data.error) {
+                        console.error('Error fetching data:', data.error);
+                        return { results: [] };
+                    }
+                    return {
+                        results: data.items,
+                        pagination: {
+                            more: (params.page || 1) * 5 < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            placeholder: 'Choose company...',
+            minimumInputLength: 0,
+            allowClear: true,
+            escapeMarkup: function(markup) {
+                return markup;
+            },
+            templateResult: function(data) {
+                return data.text;
+            },
+            templateSelection: function(data) {
+                return data.text;
+            },
+        });
+    });
+</script>
 
 @endsection

@@ -7,6 +7,7 @@ use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PDF;
 
 class EmployeesController extends Controller
 {
@@ -93,5 +94,16 @@ class EmployeesController extends Controller
             Log::error('Error in Employees destroy method: ' . $th->getMessage());
             return redirect()->route('employee.index')->with('error', 'Employee failed to delete');
         }
+    }
+
+    public function exportEmployee(Request $request)
+    {
+        $companyId = $request->company_id;
+        $employees = $this->employeeModel->getDataExport($companyId);
+        $pdf = PDF::loadView('employee.pdf', ['employees' => $employees]);
+
+        $pdf->setOption('enable-local-file-access', true);
+
+        return $pdf->download('employee.pdf');
     }
 }

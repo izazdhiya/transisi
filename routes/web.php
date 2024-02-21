@@ -22,7 +22,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::resource('employee', EmployeesController::class);
 Route::resource('company', CompaniesController::class);
 Route::get('/get-company', [CompaniesController::class, 'getCompanyOptions']);
+
+Route::resource('employee', EmployeesController::class);
+Route::get('/export-employee', [EmployeesController::class, 'exportEmployee'])->name('export-employee');;
 

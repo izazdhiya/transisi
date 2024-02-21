@@ -42,4 +42,12 @@ class Employees extends Model
 
         return $employee;
     }
+
+    public function getDataExport($companyId)
+    {
+        return $this->when($companyId, function ($query) use ($companyId) {
+            return $query->where('company_id', $companyId);
+        })->get();
+    }
+
 }
