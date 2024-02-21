@@ -65,7 +65,33 @@ echo "Trigram: " . implode(', ', $trigrams) . "\n";
 
 // 4. PHP DASAR
 
+function generateTable() {
+    $table = '<table border="1">';
 
+    for ($i = 1; $i <= 8; $i++) {
+        $table .= '<tr>';
+
+        for ($j = 1; $j <= 8; $j++) {
+            $class = isHighlighted($i, $j) ? 'highlight' : '';
+            $table .= '<td class="' . $class . '">' . (($i - 1) * 8 + $j) . '</td>';
+        }
+
+        $table .= '</tr>';
+    }
+
+    $table .= '</table>';
+
+    return $table;
+}
+
+function isHighlighted($row, $column) {
+    $blackRows = [0, 1, 3, 4, 6, 7];
+    $blackColumns = [1, 2, 3, 5, 6, 8];
+
+    return in_array($row, $blackRows) && in_array($column, $blackColumns);
+}
+
+echo generateTable();
 
 // 5. PHP DASAR
 
