@@ -122,4 +122,10 @@ class CompaniesController extends Controller
             return response()->json(['items' => [], 'total_count' => 0, 'pagination' => $pagination]);
         }
     }
+
+    public function getCompanyDetail(Request $request)
+    {
+        $company = $this->companyModel->getCompanyById($request->id);
+        return response()->json($company);
+    }
 }

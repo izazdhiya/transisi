@@ -65,6 +65,8 @@
     $(document).ready(function() {
         var baseUrl = "{{ url('/') }}";
 
+        var initialValue = $('#company_id').data('old-value');
+
         $('#company_id').select2({
             ajax: {
                 url: baseUrl + '/get-company',
@@ -77,8 +79,6 @@
                     };
                 },
                 processResults: function(data, params) {
-                    console.log("page " + params.page);
-                    console.log("totalData " + data.total_count);
                     if (data.error) {
                         console.error('Error fetching data:', data.error);
                         return { results: [] };
@@ -106,11 +106,22 @@
             }
         });
 
-        // var initialValue = $('#company_id').data('old-value');
-        // if (initialValue) {
-        //     $('#company_id').append(new Option(initialValue, initialValue, true, true));
-        //     $('#company_id').trigger('change');
-        // }
+        if (initialValue) {
+            $.ajax({
+                url: baseUrl + '/get-company-detail',
+                method: 'GET',
+                data: { id: initialValue },
+                dataType: 'json',
+                success: function(response) {
+                    var companyName = response.name;
+                    $('#company_id').append(new Option(companyName, initialValue, true, true));
+                    $('#company_id').trigger('change');
+                },
+                error: function(error) {
+                    console.error('Error fetching company info:', error);
+                }
+            });
+        }
     });
 </script>
 

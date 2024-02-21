@@ -24,6 +24,7 @@ Auth::routes();
 
 Route::resource('company', CompaniesController::class);
 Route::get('/get-company', [CompaniesController::class, 'getCompanyOptions']);
+Route::get('/get-company-detail', [CompaniesController::class, 'getCompanyDetail']);
 
 Route::resource('employee', EmployeesController::class);
 Route::get('/export-employee', [EmployeesController::class, 'exportEmployee'])->name('export-employee');
