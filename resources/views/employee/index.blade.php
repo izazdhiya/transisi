@@ -13,7 +13,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <span>{{ __('Employee') }}</span>
                     <div>
-                        <a class="btn btn-outline-primary" href="{{ route('employee.create') }}">
+                        <a class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modal-import-employee">
                             Import
                         </a>
                         <a class="btn btn-primary" href="{{ route('employee.create') }}">
@@ -100,6 +100,8 @@
         </div>
     </div>
 </div>
+
+@include('employee.import')
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

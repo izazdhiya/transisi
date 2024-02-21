@@ -45,16 +45,11 @@ class Companies extends Model
         return $company;
     }
 
-    // public function getCompany($query)
-    // {
-    //     $companies = $this->where('name', 'like', '%' . $query . '%')->get();
-
-    //     $data = $companies->map(function ($company) {
-    //         return ['id' => $company->id, 'text' => $company->name];
-    //     })->toArray();
-
-    //     return $data;
-    // }
+    public function getCompanyIdByName($name)
+    {
+        $company = $this->where('name', $name)->first();
+        return $company->id;
+    }
 
     public function getCompany($query, $page, $perPage)
     {

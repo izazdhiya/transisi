@@ -26,5 +26,6 @@ Route::resource('company', CompaniesController::class);
 Route::get('/get-company', [CompaniesController::class, 'getCompanyOptions']);
 
 Route::resource('employee', EmployeesController::class);
-Route::get('/export-employee', [EmployeesController::class, 'exportEmployee'])->name('export-employee');;
+Route::get('/export-employee', [EmployeesController::class, 'exportEmployee'])->name('export-employee');
+Route::post('/import-employee', [EmployeesController::class, 'importEmployee'])->name('import-employee');
 

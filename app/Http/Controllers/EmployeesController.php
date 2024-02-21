@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\EmployeesRequest;
+use App\Imports\EmployeeImport;
 use App\Models\Employees;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 
 class EmployeesController extends Controller
@@ -98,12 +100,42 @@ class EmployeesController extends Controller
 
     public function exportEmployee(Request $request)
     {
-        $companyId = $request->company_id;
-        $employees = $this->employeeModel->getDataExport($companyId);
-        $pdf = PDF::loadView('employee.pdf', ['employees' => $employees]);
+        try {
+            $companyId = $request->company_id;
+            $employees = $this->employeeModel->getDataExport($companyId);
 
-        $pdf->setOption('enable-local-file-access', true);
+            if (count($employees) != 0) {
+                $pdf = PDF::loadView('employee.pdf', ['employees' => $employees]);
 
-        return $pdf->download('employee.pdf');
+                $pdf->setOption('enable-local-file-access', true);
+                $pdf->download('employee.pdf');
+
+                return $pdf->download('employee.pdf');
+            } else {
+                return redirect()->route('employee.index')->with('warning', 'No data will be exported');
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error in importEmployee method: ' . $th->getMessage());
+            return redirect()->route('employee.index')->with('error', 'Data failed to export');
+        }     
+    }
+
+    public function importEmployee(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $file = $request->file('file_employee');
+            Excel::import(new EmployeeImport, $file);
+
+            DB::commit();
+
+            return redirect()->route('employee.index')->with('success', 'Data successfully imported');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            Log::error('Error in importEmployee method: ' . $th->getMessage());
+            return redirect()->route('employee.index')->with('error', 'Data failed to import');
+        }
     }
 }
